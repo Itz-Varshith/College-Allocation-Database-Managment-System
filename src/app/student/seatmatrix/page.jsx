@@ -769,7 +769,6 @@ export default function SeatMatrixPage() {
         } else {
           categoryArray = [Number.parseInt(selectedCategory, 10)]
         }
-
         const res = await fetch("http://localhost:9000/seatMatrix/data", {
           method: "POST",
           headers: {
@@ -781,7 +780,8 @@ export default function SeatMatrixPage() {
             category_id: categoryArray,
           }),
         })
-
+        console.log(instituteArray,departmentArray,categoryArray)
+        console.log("efhsu",res)
         const data = await res.json()
         console.log(data)
 
