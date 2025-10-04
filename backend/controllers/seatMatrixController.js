@@ -99,8 +99,8 @@ for(let i=0;i<data.category_id.length;i++){
 for(let i=0;i<data.department_id.length;i++){
   data.department_id[i]=parseInt(data.department_id[i],10);
 }
-for(let i=0;i<data.department_id.length;i++){
-  data.department_id[i]=parseInt(data.department_id[i],10);
+for(let i=0;i<data.college_id.length;i++){
+  data.college_id[i]=parseInt(data.college_id[i],10);
 }
 
 const programs = await prisma.program.findMany({
