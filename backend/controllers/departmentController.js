@@ -28,4 +28,26 @@ const addDepartmentController = async (req, res) => {
   }  
 };
 
-export { addDepartmentController };
+const getAllDepartments=async(req,res)=>{
+  try {
+    const allDepts=await prisma.department.findMany();
+    let results=[];
+    for(const dept of allDepts){
+      results.push({name:dept.department_name,id:dept.department_id})
+    }
+    return res.status(200).json({
+      success:true,
+      message:"Department names fetched successfully",
+      namesList:results
+    })
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success:false,
+      message:"server error while fetching department list",
+      error
+    })
+  }
+}
+
+export { addDepartmentController, getAllDepartments };

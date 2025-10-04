@@ -7,7 +7,7 @@ import path from "path";
 const prisma = new PrismaClient();
 
 const __filename = fileURLToPath(import.meta.url);
-export const __dirname = path.dirname(__filename);
+const __dirname = path.dirname(__filename);
 
 const csvPath = path.join(__dirname, "students.csv");
 const addStudentController = async (req, res) => {

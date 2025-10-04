@@ -65,7 +65,10 @@ export default function Sidebar() {
           variant="outline"
           size="icon"
           onClick={toggleMobileMenu}
-          className="bg-white border-blue-200 hover:bg-blue-50"
+          // className="bg-white border-blue-200 hover:bg-blue-50"
+          className={
+            isMobileMenuOpen ? "bg-white border-blue-200 hover:bg-blue-50 hidden" :"bg-white border-blue-200 hover:bg-blue-50"
+          }
         >
           {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
         </Button>

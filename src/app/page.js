@@ -18,7 +18,7 @@ const features = [
   {
     title: "Seat Matrix",
     desc: "View seat availability across institutes and departments with filters.",
-    href: "/seatmatrix",
+    href: "/seat-matrix",
   },
   {
     title: "Previous Allocation",
@@ -73,7 +73,7 @@ export default function LandingPage() {
                 <Link href="/login">Login</Link>
               </Button>
               <Button variant="outline" asChild>
-                <Link href="/seatmatrix">Explore Seat Matrix</Link>
+                <Link href="/seat-matrix">Explore Seat Matrix</Link>
               </Button>
             </div>
           </div>
@@ -81,7 +81,7 @@ export default function LandingPage() {
           {/* Features Grid */}
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
-              <Link key={f.title} href={f.href}>
+              <div key={f.title}>
                 <Card className="h-full">
                   <CardHeader>
                     <CardTitle className="text-pretty text-base md:text-lg">{f.title}</CardTitle>
@@ -90,7 +90,7 @@ export default function LandingPage() {
                     <p className="text-pretty text-sm text-muted-foreground">{f.desc}</p>
                   </CardContent>
                 </Card>
-              </Link>
+              </div>
             ))}
           </div>
         </section>

@@ -103,7 +103,8 @@ model Preferences {
   programID         Program  @relation(fields: [program_id], references: [program_id])
   program_id        Int
 
-  @@id([student_id, program_id])
+  // @@id([student_id, program_id])
+  @@id([student_id,preference_number])
 }
 
 model Round {

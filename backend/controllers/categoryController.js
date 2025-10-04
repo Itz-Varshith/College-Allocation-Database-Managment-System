@@ -37,4 +37,26 @@ const createCategory = async (req, res) => {
   }
 };
 
-export { createCategory };
+
+const getAllCategories=async (req,res)=>{
+  try {
+    const allCats=await prisma.category.findMany();
+    let results=[];
+    for(const cat of allCats){
+      results.push({name:cat.category_name,id:cat.category_id})
+    }
+    return res.status(200).json({
+      success:true,
+      message:"Categories fetched successfully",
+      namesList:results
+    })
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success:false,
+      message:"Server error while fetching categories",
+      error
+    })
+  }
+}
+export { createCategory , getAllCategories};
