@@ -30,7 +30,7 @@ router.post("/login", async (req, res) => {
         });
 
         req.session.studentId = student.student_id;
-
+        
         return res.status(200).json({ 
           message: "Registered successfully & logged in", 
           studentId: student.student_id 
@@ -44,13 +44,17 @@ router.post("/login", async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
-
+   
     req.session.studentId = student.student_id;
+  req.session.save((err) => {
+  if (err) console.error("Session save error:", err);
+  return res.status(200).json({ 
+    message: "Login successful", 
+    studentId: student.student_id 
+  });
+});
 
-    return res.status(200).json({ 
-      message: "Login successful", 
-      studentId: student.student_id 
-    });
+
 
   } catch (error) {
     console.error(error);

@@ -1275,6 +1275,7 @@ export default function PreferencePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
+        credentials:"include"
       })
 
       const data = await res.json().catch(() => null)
@@ -1318,7 +1319,9 @@ export default function PreferencePage() {
 
     const fetchPreferences = async () => {
       try {
-        const res = await fetch(`http://localhost:9000/preference/self/2500001`)
+        const res = await fetch(`http://localhost:9000/preference/self/2500001`,{
+          credentials:"include"
+        })
         const data = await res.json()
         if (data.success && data.preference) {
           const normalized = data.preference.map((p, idx) => {
