@@ -36,10 +36,10 @@ const quickActions = [
 
 export default function HomePage() {
   const recentAllocation = {
-    roundNumber: 3,
-    allocatedCollege: "IIT Delhi",
-    department: "Computer Science and Engineering",
-    status: "Allocated",
+    roundNumber: "-",
+    allocatedCollege: "-",
+    department: "-",
+    status: "Process not started",
   }
 
   return (
@@ -48,7 +48,8 @@ export default function HomePage() {
         <CardHeader className="pb-3">
           <CardTitle className="text-blue-800 flex items-center gap-2">
             <School className="h-5 w-5" />
-            Recent Seat Allocation - Round {recentAllocation.roundNumber}
+            {/* Recent Seat Allocation - Round {recentAllocation.roundNumber} */}
+            Recent Seat Allocation
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">

@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 const getPreferences = async (req, res) => {
   try {
-    const studentId = req.params.id;
+    const studentId = "812";
     if (!studentId) {
       return res.status(400).json({
         success: false,
@@ -69,7 +69,7 @@ const addPreferences = async (req, res) => {
         results.push(prog.program_id);
       }
     }
-
+    data.studentId=812;
     // Step 2: Upsert (Insert or Update) preferences
     let i = 1;
     for (const programId of results) {
