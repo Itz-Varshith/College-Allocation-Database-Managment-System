@@ -1,5 +1,4 @@
 import { Geist, Geist_Mono } from "next/font/google";
-// import { Analytics } from "@vercel/analytics/react"
 import Sidebar from "@/components/sidebar"
 import "../globals.css"
 import { Suspense } from "react"

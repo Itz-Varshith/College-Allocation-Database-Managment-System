@@ -77,6 +77,8 @@ const addSeatMatrixController = async (req, res) => {
 const getSeatMatrixData = async (req, res) => {
   try {
     const data = req.body;
+    console.log(data)
+    
     if (
       !data.category_id ||
       !data.college_id ||

@@ -5,11 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
 const features = [
-  // {
-  //   title: "Preferences & Allocation",
-  //   desc: "Students can add preferences and participate in the allocation process.",
-  //   href: "/preference",
-  // },
   {
     title: "Student Dashboard",
     desc: "Manage activities, track progress, and view important updates in one place.",
@@ -96,12 +91,6 @@ export default function LandingPage() {
         </section>
       </main>
 
-      {/* Footer (simple, consistent)
-      <footer className="border-t border-border">
-        <div className="mx-auto max-w-6xl px-4 py-6 text-center text-xs text-muted-foreground">
-          © {new Date().getFullYear()} College Allocation. All rights reserved.
-        </div>
-      </footer> */}
     </div>
   )
 }

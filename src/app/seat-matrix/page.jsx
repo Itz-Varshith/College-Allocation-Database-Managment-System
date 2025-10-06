@@ -66,7 +66,6 @@ export default function SeatMatrixPage() {
     setLoading(true)
     try {
       if (selectedInstitute && selectedDepartment && selectedCategory) {
-        // ✅ Build arrays locally instead of relying on async setState
         let instituteArray = []
         let departmentArray = []
         let categoryArray = []
@@ -89,7 +88,6 @@ export default function SeatMatrixPage() {
           categoryArray = [Number.parseInt(selectedCategory, 10)]
         }
 
-        // 🔥 Now send correct arrays directly
         const res = await fetch("http://localhost:9000/seatMatrix/data", {
           method: "POST",
           headers: {
