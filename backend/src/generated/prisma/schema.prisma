@@ -1,0 +1,148 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  category_id       Int                 @id @default(autoincrement())
+  category_name     String
+  Seat_Matrix       Seat_Matrix[]
+  Student           Student[]
+  Allocation_Status Allocation_Status[]
+  CutOff_ranks      CutOff_ranks[]
+}
+
+model College {
+  college_id   Int       @id @default(autoincrement())
+  college_name String
+  city         String
+  state        String
+  pincode      String
+  Program      Program[]
+}
+
+model Department {
+  department_id   Int       @id @default(autoincrement())
+  department_name String
+  Program         Program[]
+}
+
+model Program {
+  program_id        Int                 @id @default(autoincrement())
+  deptID            Department          @relation(fields: [department_id], references: [department_id])
+  department_id     Int
+  collegeID         College             @relation(fields: [college_id], references: [college_id])
+  college_id        Int
+  duration          String
+  Seat_Matrix       Seat_Matrix[]
+  Preferences       Preferences[]
+  Allocation_Status Allocation_Status[]
+  CutOff_ranks      CutOff_ranks[]
+}
+
+model Seat_Matrix {
+  progID      Program  @relation(fields: [program_id], references: [program_id])
+  program_id  Int
+  categoryID  Category @relation(fields: [category_id], references: [category_id])
+  category_id Int
+  total_seats Int
+
+  @@id([program_id, category_id])
+}
+
+model Admin {
+  admin_id Int    @id @default(autoincrement())
+  email    String
+  password String
+}
+
+enum gender {
+  male
+  female
+}
+
+enum status {
+  float
+  freeze
+  withdrawn
+}
+
+model Student {
+  student_id        Int                 @id @default(autoincrement())
+  name              String
+  email             String
+  password          String
+  mobile_number     String
+  gender            gender
+  current_status    status              @default(float)
+  isRegistered      Boolean             @default(false)
+  general_rank      BigInt
+  category_rank     BigInt
+  categoryID        Category            @relation(fields: [category_id], references: [category_id])
+  category_id       Int
+  Preferences       Preferences[]
+  Allocation_Status Allocation_Status[]
+}
+
+model Preferences {
+  studentID         Student  @relation(fields: [student_id], references: [student_id])
+  student_id        Int
+  preference_number Int
+  created_at        DateTime @default(now())
+  programID         Program  @relation(fields: [program_id], references: [program_id])
+  program_id        Int
+
+  @@id([student_id, program_id])
+}
+
+model Round {
+  round_number      Int                 @id @default(autoincrement())
+  start_time        DateTime            @default(now())
+  end_time          DateTime
+  duration          Int
+  Allocation_Status Allocation_Status[]
+  CutOff_ranks      CutOff_ranks[]
+}
+
+enum rankType {
+  general
+  category
+}
+
+model Allocation_Status {
+  studentID       Student  @relation(fields: [student_id], references: [student_id])
+  student_id      Int
+  programID       Program  @relation(fields: [program_id], references: [program_id])
+  program_id      Int
+  categoryID      Category @relation(fields: [category_id], references: [category_id])
+  category_id     Int
+  rank_value_used BigInt
+  rank_type_used  rankType
+  roundID         Round    @relation(fields: [round_id], references: [round_number])
+  round_id        Int
+
+  @@id([student_id, program_id, category_id, round_id])
+}
+
+model CutOff_ranks {
+  cutOff_id    Int      @id @default(autoincrement())
+  programID    Program  @relation(fields: [program_id], references: [program_id])
+  program_id   Int
+  categoryID   Category @relation(fields: [category_id], references: [category_id])
+  category_id  Int
+  closing_rank BigInt
+  opening_rank BigInt
+  roundID      Round    @relation(fields: [round_id], references: [round_number])
+  round_id     Int
+}
