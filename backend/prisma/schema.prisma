@@ -62,7 +62,7 @@ model Seat_Matrix {
 }
 
 model Admin {
-  admin_id Int    @id @default(autoincrement())
+  admin_id Int    @id 
   email    String
   password String
 }
@@ -79,7 +79,7 @@ enum status {
 }
 
 model Student {
-  student_id        Int                 @id @default(autoincrement())
+  student_id        Int                 @id 
   name              String
   email             String              
   password          String
@@ -108,7 +108,7 @@ model Preferences {
 }
 
 model Round {
-  round_number      Int                 @id @default(autoincrement())
+  round_number      Int                 @id 
   start_time        DateTime            @default(now())
   end_time          DateTime
   duration          Int

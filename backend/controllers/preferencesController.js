@@ -1,10 +1,14 @@
 import { PrismaClient } from "../generated/prisma/index.js";
+import fs from "fs"
+import csv from "csv-parser"
+import path from "path";
+import { fileURLToPath } from "url";
 
 const prisma = new PrismaClient();
 
 const getPreferences = async (req, res) => {
   try {
-    const studentId = "812";
+    const studentId = req.session.studentId;
     if (!studentId) {
       return res.status(400).json({
         success: false,
@@ -42,7 +46,7 @@ const getPreferences = async (req, res) => {
 const addPreferences = async (req, res) => {
   try {
     const data = req.body;
-
+    data.studentId=req.session.studentId;
     if (
       !data.studentId ||
       !data.preferences ||
@@ -69,7 +73,7 @@ const addPreferences = async (req, res) => {
         results.push(prog.program_id);
       }
     }
-    data.studentId=812;
+    data.studentId=req.session.studentId;
     // Step 2: Upsert (Insert or Update) preferences
     let i = 1;
     for (const programId of results) {
@@ -116,7 +120,65 @@ const addPreferences = async (req, res) => {
   }
 };
 
-export { getPreferences, addPreferences };
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const csvPath = path.join(__dirname, "student_preferences_chatgpt.csv");
+
+const addAllStudentPreferences=async(req,res)=>{
+  try {
+    const results=[]
+     fs.createReadStream(csvPath)
+          .pipe(csv())
+          .on("data", (data) => {
+            data.student_id=parseInt(data.student_id,10);
+            data.student_id+=2500000
+            data.program_id=parseInt(data.program_id,10);
+            data.preference_number=parseInt(data.preference_number,10);
+            results.push(data);
+          })
+          .on("end", async () => {
+            try {
+              const batchSize = 100;
+    
+              for (let i = 0; i < results.length; i += batchSize) {
+                const batch = results.slice(i, i + batchSize);
+                await prisma.preferences.createMany({
+                  data: batch,
+                  skipDuplicates: true,
+                });
+              }
+    
+              return res.status(200).json({
+                success: true,
+                message: "Preferences added successfully",
+              });
+            } catch (error) {
+              console.error("Error inserting Preferences:", error);
+              return res.status(500).json({
+                success: false,
+                message: "Error while adding Preferences",
+              });
+            }
+          })
+          .on("error", (err) => {
+            console.error("CSV read error:", err);
+            return res.status(500).json({
+              success: false,
+              message: "Error reading CSV file",
+            });
+          });
+  } catch (error) {
+    console.error(error)
+    return res.status(500).json({
+      success:false,
+      message:"Server error while adding all student preferences",
+      error
+    })
+  }
+}
+export { getPreferences, addPreferences, addAllStudentPreferences };
 
 
 

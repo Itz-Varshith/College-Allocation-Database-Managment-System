@@ -102,7 +102,6 @@ export default function PreferencePage() {
     setIsSaving(true)
     try {
       const payload = {
-        studentId: 2500001,
         preferences: preferences.map((p) => ({
           college_id: Number(p.college_id),
           department_id: Number(p.department_id),
