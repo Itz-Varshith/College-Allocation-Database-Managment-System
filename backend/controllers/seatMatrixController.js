@@ -18,12 +18,10 @@ const addSeatMatrixController = async (req, res) => {
     fs.createReadStream(csvPath)
       .pipe(
         csv({
-          // Trim headers so " program_id" -> "program_id"
           mapHeaders: ({ header }) => header.trim(),
         })
       )
       .on("data", (row) => {
-        // Trim all values before converting
         const cleaned = {
           program_id: Number(row.program_id?.trim()),
           category_id: Number(row.category_id?.trim()),
