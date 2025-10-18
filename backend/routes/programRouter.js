@@ -3,6 +3,6 @@ import { addProgramController } from "../controllers/programController.js";
 const programRouter = new Router();
 
 
-programRouter.post('/add',addProgramController);
+programRouter.get('/add',addProgramController);
 
 export default programRouter;
