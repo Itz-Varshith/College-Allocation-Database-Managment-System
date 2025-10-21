@@ -52,6 +52,7 @@ import departmentRouter from "./routes/departmentRouter.js";
 import programRouter from "./routes/programRouter.js";
 import seatMatrixRouter from "./routes/seatMatrixRouter.js";
 import prefernceRouter from "./routes/preferenceRouter.js";
+import allocationRouter from "./routes/allocationRouter.js";
 const app = new express();
 import authRoutes from "./routes/auth.js";
 import profileRouter from "./routes/profile.js";
@@ -94,7 +95,7 @@ app.use('/preference',prefernceRouter)
 app.use("/api", authRoutes);
 app.use("/api/profile", profileRouter);
 app.use("/api/change-password", changePasswordRouter);
-
+app.use('/allocation',allocationRouter)
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

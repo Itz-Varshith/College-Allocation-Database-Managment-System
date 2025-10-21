@@ -4,6 +4,6 @@ import {addSeatMatrixController,getSeatMatrixData} from "../controllers/seatMatr
 
 const seatMatrixRouter=new Router()
 
-seatMatrixRouter.post('/add',addSeatMatrixController)
+seatMatrixRouter.get('/add',addSeatMatrixController)
 seatMatrixRouter.post('/data',getSeatMatrixData)
 export default seatMatrixRouter;

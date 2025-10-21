@@ -62,7 +62,7 @@ model Seat_Matrix {
 }
 
 model Admin {
-  admin_id Int    @id @default(autoincrement())
+  admin_id Int    @id
   email    String
   password String
 }
@@ -79,9 +79,9 @@ enum status {
 }
 
 model Student {
-  student_id        Int                 @id @default(autoincrement())
+  student_id        Int                 @id
   name              String
-  email             String              
+  email             String
   password          String
   mobile_number     String
   gender            gender
@@ -104,11 +104,11 @@ model Preferences {
   program_id        Int
 
   // @@id([student_id, program_id])
-  @@id([student_id,preference_number])
+  @@id([student_id, preference_number])
 }
 
 model Round {
-  round_number      Int                 @id @default(autoincrement())
+  round_number      Int                 @id
   start_time        DateTime            @default(now())
   end_time          DateTime
   duration          Int
@@ -132,6 +132,7 @@ model Allocation_Status {
   rank_type_used  rankType
   roundID         Round    @relation(fields: [round_id], references: [round_number])
   round_id        Int
+  year            Int
 
   @@id([student_id, program_id, category_id, round_id])
 }

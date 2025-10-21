@@ -3,7 +3,7 @@ import { addDepartmentController, getAllDepartments } from "../controllers/depar
 
 const departmentRouter = new Router()
 
-departmentRouter.post('/add',addDepartmentController)
+departmentRouter.get('/add',addDepartmentController)
 departmentRouter.get('/all',getAllDepartments)
 
 export default departmentRouter;
