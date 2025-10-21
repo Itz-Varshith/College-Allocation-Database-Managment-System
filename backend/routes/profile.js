@@ -65,7 +65,7 @@ router.get("/", async (req, res) => {
         isRegistered: true,
         general_rank: true,
         category_rank: true,
-        category_id: true,  // This gives the ID of the category relation
+        category_id: true,  
       },
     });
 

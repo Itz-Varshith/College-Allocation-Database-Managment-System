@@ -75,5 +75,72 @@ const addStudentController = async (req, res) => {
 const addStudentPreferences= async (req,res)=>{
 
 }
+const getStudentAllocation = async (req, res) => {
+  try {
+    console.log(req.session.studentId);
+    if (!req.session.studentId) {
+      return res.status(401).json({ message: "Not logged in" });
+    }
 
-export { addStudentController, addStudentPreferences };
+    const student_id = req.session.studentId;
+
+    if (!student_id) {
+      return res.status(400).json({ error: "student_id is required" });
+    }
+
+    // Fetch all allocations for this student (for every round)
+    const allAllocations = await prisma.allocation_Status.findMany({
+      where: { student_id: Number(student_id) },
+      orderBy: { round_id: "desc" },
+      select: {
+        round_id: true,
+        program_id: true,
+      },
+    });
+
+    if (!allAllocations || allAllocations.length === 0) {
+      return res.json([]);
+    }
+
+    // Prepare an array of allocation details for each round
+    const responseArray = [];
+
+    for (const allocation of allAllocations) {
+      const { round_id, program_id } = allocation;
+
+      const programDetails = await prisma.program.findUnique({
+        where: { program_id },
+        select: {
+          collegeID: { select: { college_name: true } },
+          deptID: { select: { department_name: true } },
+        },
+      });
+
+      if (!programDetails) continue;
+
+      const preferenceRecord = await prisma.preferences.findFirst({
+        where: {
+          student_id: Number(student_id),
+          program_id: program_id,
+        },
+        select: { preference_number: true },
+      });
+
+      if (!preferenceRecord) continue;
+
+      responseArray.push({
+        round_id,
+        college_name: programDetails.collegeID.college_name,
+        department_name: programDetails.deptID.department_name,
+        preference_number: preferenceRecord.preference_number,
+      });
+    }
+
+    res.json(responseArray);
+  } catch (err) {
+    console.error("Error fetching allocation details:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export { addStudentController, addStudentPreferences, getStudentAllocation };
