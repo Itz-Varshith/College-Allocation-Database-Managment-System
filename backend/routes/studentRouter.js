@@ -4,4 +4,5 @@ const studentRouter=new Router();
 
 studentRouter.get('/add',addStudentController)
 studentRouter.post('/preferences',addStudentPreferences)
+
 export default studentRouter;
