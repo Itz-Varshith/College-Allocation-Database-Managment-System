@@ -1120,7 +1120,7 @@ export default function SeatMatrixPage() {
                     <SelectValue placeholder="Choose institute" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="all">All Colleges</SelectItem>
                     {institutes.map((inst) => (
                       <SelectItem key={inst.id} value={String(inst.id)}>
                         {inst.name}
@@ -1138,7 +1138,7 @@ export default function SeatMatrixPage() {
                     <SelectValue placeholder="Choose department" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="all">All Departements</SelectItem>
                     {departments.map((dept) => (
                       <SelectItem key={dept.id} value={String(dept.id)}>
                         {dept.name}
@@ -1156,7 +1156,7 @@ export default function SeatMatrixPage() {
                     <SelectValue placeholder="Choose category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="all">All Categories</SelectItem>
                     {categories.map((cat) => (
                       <SelectItem key={cat.id} value={String(cat.id)}>
                         {cat.name}
