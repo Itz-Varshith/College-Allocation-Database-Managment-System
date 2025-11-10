@@ -41,7 +41,7 @@ const insertCuttOffRanks = async (req, res) => {
       closing_rank: item._max.rank_value_used?.toString(),
     }));
 
-    const result =await prisma.cutOff_ranks.createMany({
+    const result = await prisma.cutOff_ranks.createMany({
       data: serializedCuttOffRanks,
     });
     console.log(result);
@@ -246,4 +246,80 @@ const startAllocation = async (req, res) => {
   }
 };
 
-export { startAllocation, insertCuttOffRanks };
+const getOpeningAndClosingRanks = async (req, res) => {
+  try {
+    const data = req.body;
+    if (
+      !data.college_id ||
+      !data.department_id ||
+      !data.category_id ||
+      !data.round_number ||
+      !Array.isArray(data.college_id) ||
+      !Array.isArray(data.department_id) ||
+      !Array.isArray(data.category_id)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Provide all the necessary fields",
+      });
+    }
+    data.college_id = data.college_id.map((item) => parseInt(item, 10));
+    data.department_id = data.department_id.map((item) => parseInt(item, 10));
+    data.category_id = data.category_id.map((item) => parseInt(item, 10));
+    data.round_number = parseInt(data.round_number, 10);
+    const allProgramsids = await prisma.program.findMany({
+      where: {
+        college_id: { in: data.college_id },
+        department_id: { in: data.department_id },
+      },
+      select: {
+        program_id: true,
+      },
+    });
+    const roundDetails = await prisma.round.findUnique({
+      where: {
+        round_number: data.round_number,
+      },
+    });
+    const totalData = await prisma.cutOff_ranks.findMany({
+      where: {
+        program_id: { in: allProgramsids.map((item) => item.program_id) },
+        category_id: { in: data.category_id },
+        round_id: { in: roundDetails.round_id },
+      },
+      include: {
+        programID: {
+          select: {
+            college_id: true,
+            department_id: true,
+          },
+        },
+      },
+    });
+
+    const serializedData = totalData.map((item) => ({
+      program_id: item.program_id.toString(),
+      category_id: item.category_id.toString(),
+      round_id: item.round_id.toString(),
+      opening_rank: item.opening_rank?.toString(),
+      closing_rank: item.closing_rank?.toString(),
+      college_id: item.programID.college_id.toString(),
+      department_id: item.programID.department_id.toString(),
+    }));
+
+    return res.status(200).json({
+      success: true,
+      message: "Opening and closing ranks fetched successfully",
+      data: serializedData,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while getting opening and closing ranks",
+      error: error,
+    });
+  }
+};
+
+export { startAllocation, insertCuttOffRanks, getOpeningAndClosingRanks };
