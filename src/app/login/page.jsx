@@ -7,10 +7,10 @@ export default function HomePage() {
       <header className="w-full py-8 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-2xl md:text-3xl font-bold text-foreground text-balance">
-            College Allocation Database Management
+            College Allocation Database System
           </h1>
           <p className="text-muted-foreground mt-2 text-sm md:text-base">
-            Secure access to the college allocation system
+            Secure access to College Allocation system
           </p>
         </div>
       </header>
