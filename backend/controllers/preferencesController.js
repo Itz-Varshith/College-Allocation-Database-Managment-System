@@ -178,7 +178,6 @@ const addAllStudentPreferences=async(req,res)=>{
     })
   }
 }
-
 export { getPreferences, addPreferences, addAllStudentPreferences };
 
 
