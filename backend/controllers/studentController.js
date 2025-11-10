@@ -143,4 +143,37 @@ const getStudentAllocation = async (req, res) => {
   }
 };
 
-export { addStudentController, addStudentPreferences, getStudentAllocation };
+const changeCurrentStatus = async (req,res) => {
+    try {
+      const data=req.body;
+      data.student_id=req.session.studentId;
+      if(!data.student_id || !data.statusChangeTo) {
+        return res.status(404).json({
+          success:false,
+          message:"Incorrect data format provided",
+        })
+      }
+      const santizedData=data.statusChangeTo.toLowerCase();
+      await prisma.student.update({
+        where:{
+          student_id:parseInt(data.student_id,10)
+        },
+        data:{
+          current_status:santizedData
+        }
+      })
+      return res.status(200).json({
+        success:true,
+        message:"Status changed successfully"
+      })
+    } catch (error) {
+      console.error(error);
+      return res.json({
+        success:false,
+        message:"Server error while changing the current state for the user",
+        error:error
+      })
+    }
+}
+
+export { addStudentController, addStudentPreferences, getStudentAllocation,changeCurrentStatus };
