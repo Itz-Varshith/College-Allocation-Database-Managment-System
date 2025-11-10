@@ -7,10 +7,10 @@ export default function HomePage() {
       <header className="w-full py-8 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-2xl md:text-3xl font-bold text-foreground text-balance">
-            College Allocation Database System
+            College Allocation Database Management
           </h1>
           <p className="text-muted-foreground mt-2 text-sm md:text-base">
-            Secure access to College Allocation system
+            Secure access to the college allocation system
           </p>
         </div>
       </header>
@@ -20,6 +20,8 @@ export default function HomePage() {
           <LoginForm />
         </div>
       </main>
+
+      
     </div>
   )
 }
