@@ -71,7 +71,7 @@ const addStudentController = async (req, res) => {
   }
 };
 
-// This controller will take ,ist of choices and add into the users list. 
+
 const addStudentPreferences= async (req,res)=>{
 
 }
