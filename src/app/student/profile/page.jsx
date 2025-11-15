@@ -45,7 +45,7 @@ export default function ProfilePage() {
         body: JSON.stringify({ currentPassword, newPassword, confirmPassword }),
       })
       const data = await res.json()
-      setMessage(data.message)
+      setMessage(data.message) 
       if (res.ok) {
         setCurrentPassword(""); setNewPassword(""); setConfirmPassword("")
       }
