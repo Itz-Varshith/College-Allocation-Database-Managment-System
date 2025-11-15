@@ -1,3 +1,4 @@
+
 import { PrismaClient } from "../generated/prisma/index.js";
 import fs from "fs";
 import path from "path";
@@ -322,4 +323,38 @@ const getOpeningAndClosingRanks = async (req, res) => {
   }
 };
 
-export { startAllocation, insertCuttOffRanks,getOpeningAndClosingRanks };
+
+
+const FetchRoundNumber = async (req,res) => {
+   try {
+    // Find the latest round where start_time <= NOW()
+    let round = await prisma.round.findFirst({
+      where: {
+        start_time: {
+          lte: new Date(),   // start_time <= now
+        },
+      },
+      orderBy: {
+        start_time: "desc",  // closest to now
+      },
+      select: {
+        round_number: true,
+      },
+    });
+
+    // return round_number or null
+    let round_no=round ? round.round_number : null
+    return res.status(200).json({
+      success: true,
+      message: "Round number returned successfully",
+      data: round_no,
+    });
+
+  } catch (error) {
+    console.error("Error getting latest round number:", error);
+    return null;
+  }
+};
+
+export { startAllocation, insertCuttOffRanks,getOpeningAndClosingRanks,FetchRoundNumber };
+

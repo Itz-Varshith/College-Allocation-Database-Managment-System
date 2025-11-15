@@ -972,6 +972,8 @@
 // }
 
 
+
+
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -1020,6 +1022,9 @@ export default function HomePage() {
     status: "Process not started",
     isAllocated: false,
   })
+  const [roundNumber, setroundNumber] = useState({
+    roundNumber: "-",
+  })
   const [currentStatus, setCurrentStatus] = useState(null)
   const [confirmDialog, setConfirmDialog] = useState({ open: false, action: null })
 
@@ -1033,10 +1038,10 @@ export default function HomePage() {
         const data2 = await res.json(),
           data = data2[0]
         if (res.ok) {
-          console.log(data)
+          // console.log(data)
           if(data){
               setRecentAllocation({
-                roundNumber: data.round_id || "-",
+                // roundNumber: data.round_id || "-",
                 allocatedCollege: data.college_name || "-",
                 department: data.department_name || "-",
                 preferenceNumber: data.preference_number || "-",
@@ -1045,7 +1050,7 @@ export default function HomePage() {
               })
           }else{
             setRecentAllocation({
-                roundNumber: "-",
+                // roundNumber: "-",
                 allocatedCollege: "-",
                 department: "-",
                 preferenceNumber: "-",
@@ -1064,6 +1069,35 @@ export default function HomePage() {
   }, [])
 
   useEffect(() => {
+    const fetchRound = async () => {
+      try {
+        const res = await fetch("http://localhost:9000/allocation/fetch-round-number", {
+          method: "GET",
+          credentials: "include",
+        })
+        
+        const data2 = await res.json();
+        if (res.ok) {
+          if(data2){
+              setroundNumber({
+                roundNumber: data2.data || "-",
+              })
+          }else{
+            setroundNumber({
+                roundNumber: "-",
+              })
+          }
+        } else {
+          console.error(data.message)
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error)
+      }
+    }
+    fetchRound()
+  }, [])
+
+  useEffect(() => {
     const fetchCurrentAllocation = async () => {
       try {
         const res = await fetch("http://localhost:9000/student/getCurrentAllocation", {
@@ -1073,7 +1107,7 @@ export default function HomePage() {
         const data = await res.json()
         if (res.ok && data.studentData) {
           setCurrentStatus(data.studentData.current_status)
-          console.log("Current status:", data.studentData.current_status)
+          // console.log("Current status:", data.studentData.current_status)
         } else {
           console.error("Error fetching current allocation:", data.message)
         }
@@ -1093,7 +1127,7 @@ export default function HomePage() {
       const data = await res.json()
       if (res.ok && data.studentData) {
         setCurrentStatus(data.studentData.current_status)
-        console.log("Updated status:", data.studentData.current_status)
+        // console.log("Updated status:", data.studentData.current_status)
       } else {
         console.error("Error fetching current allocation:", data.message)
       }
@@ -1108,7 +1142,7 @@ export default function HomePage() {
 
   const handleConfirm = async () => {
     if (confirmDialog.action) {
-      console.log(`Action confirmed: ${confirmDialog.action}`)
+      // console.log(`Action confirmed: ${confirmDialog.action}`)
       try {
         const res = await fetch("http://localhost:9000/student/changeStatus", {
           method: "POST",
@@ -1121,7 +1155,7 @@ export default function HomePage() {
 
         const data = await res.json()
         if (res.ok) {
-          console.log("Status change successful:", data)
+          // console.log("Status change successful:", data)
           await refetchCurrentAllocation()
         } else {
           console.error("Status change failed:", data.message)
@@ -1167,7 +1201,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="bg-white p-4 rounded-lg border border-blue-100">
               <p className="text-sm text-blue-600 font-medium">Round Number</p>
-              <p className="text-2xl font-bold text-blue-800">{recentAllocation.roundNumber}</p>
+              <p className="text-2xl font-bold text-blue-800">{roundNumber.roundNumber}</p>
             </div>
             <div className="bg-white p-4 rounded-lg border border-blue-100">
               <p className="text-sm text-blue-600 font-medium">Preference Number</p>
@@ -1298,3 +1332,5 @@ export default function HomePage() {
     </div>
   )
 }
+
+

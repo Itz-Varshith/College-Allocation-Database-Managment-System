@@ -1,3 +1,4 @@
+
 // import express from "express";
 // import cors from "cors";
 // import { PrismaClient } from "./generated/prisma/index.js";
@@ -99,3 +100,4 @@ app.use('/allocation',allocationRouter)
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
