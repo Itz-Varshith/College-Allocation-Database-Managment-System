@@ -176,4 +176,44 @@ const changeCurrentStatus = async (req,res) => {
     }
 }
 
-export { addStudentController, addStudentPreferences, getStudentAllocation,changeCurrentStatus };
+const getCurrentAllocationStatus=async(req,res)=>{
+  try {
+    const studentId=req.session.studentId;
+    // const studentId=2500010;
+    if(!studentId){
+      return res.status(401).json({
+        success:false,
+        message:"Unauthorized"
+      })
+    }
+    const studentData=await prisma.student.findFirst({
+      where:{
+        student_id:parseInt(studentId,10)
+      },
+      select:{
+        current_status:true
+      }
+    })
+    if(!studentData){
+      return res.status(404).json({
+        success:false,
+        message:"Student data not found"
+      })
+    }
+    console.log(studentData);
+    return res.status(200).json({
+      success:true,
+      message:"Data fetched succesfully",
+      studentData
+    })
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success:false,
+      message:"Server error while fetching current status",
+      error:error
+    })
+  }
+}
+
+export { addStudentController, addStudentPreferences, getStudentAllocation,changeCurrentStatus,getCurrentAllocationStatus };

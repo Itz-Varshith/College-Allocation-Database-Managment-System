@@ -29,7 +29,6 @@ router.post("/", async (req, res) => {
 
     const isMatch = await bcrypt.compare(currentPassword, student.password);
     if (!isMatch) return res.status(401).json({ message: "Current password is incorrect" });
-
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     await prisma.student.update({
