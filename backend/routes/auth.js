@@ -25,7 +25,7 @@ router.post("/login", async (req, res) => {
           where: { email },
           data: {
             password: hashedPassword,
-            isRegistered: true,
+            // isRegistered will be automatically set to true by database trigger
           },
         });
 
@@ -75,7 +75,6 @@ router.post("/set-password", async (req, res) => {
     for (const user of users) {
       const hashedPassword = await bcrypt.hash(user.mobile_number, 10);
 
-      
       updatePromises.push(
         prisma.student.update({
           where: { student_id: user.student_id },
