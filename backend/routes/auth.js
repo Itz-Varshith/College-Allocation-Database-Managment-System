@@ -62,4 +62,38 @@ router.post("/login", async (req, res) => {
   }
 });
 
+
+router.post("/logout", async (req, res) => {
+  try {
+    // Check if session exists
+    if (!req.session) {
+      return res.status(200).json({
+        message: "Already logged out",
+      });
+    }
+
+    // Destroy the session
+    req.session.destroy((err) => {
+      if (err) {
+        console.error("Session destroy error:", err);
+        return res.status(500).json({ message: "Error during logout" });
+      }
+
+      // Clear the session cookie (default name is "connect.sid")
+      res.clearCookie("connect.sid", {
+        httpOnly: true,
+        secure: false, // Set to true if using HTTPS
+        sameSite: "lax",
+      });
+
+      return res.status(200).json({
+        message: "Logout successful",
+      });
+    });
+  } catch (error) {
+    console.error("Logout error:", error);
+    return res.status(500).json({ message: "Server error during logout" });
+  }
+});
+
 export default router;

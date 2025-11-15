@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Home, Grid3X3, History, Settings, TrendingUp, User, Menu, X } from "lucide-react"
+import { usePathname } from 'next/navigation'
+import { Home, Grid3X3, History, Settings, TrendingUp, User, Menu, X, LogOut } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 
 const sidebarItems = [
@@ -23,14 +23,26 @@ export default function Sidebar() {
     setIsMobileMenuOpen(!isMobileMenuOpen)
   }
 
+  const handleLogout = async () => {
+    // Replace with your actual logout logic (e.g., API call to /api/logout)
+    try {
+      const response = await fetch('/api/logout', { method: 'POST' })
+      if (response.ok) {
+        window.location.href = '/login' // Redirect to login page
+      }
+    } catch (error) {
+      console.error('Logout failed:', error)
+    }
+  }
+
   const SidebarContent = () => (
-    <>
+    <div className="flex flex-col h-screen">
       <div className="p-6 border-b border-blue-200">
         <h1 className="text-xl font-bold text-blue-800">Student Dashboard</h1>
         <p className="text-sm text-blue-600 mt-1">College Allocation System</p>
       </div>
 
-      <nav className="p-4">
+      <nav className="p-4 flex-1">
         <ul className="space-y-2">
           {sidebarItems.map((item) => {
             const IconComponent = item.icon
@@ -54,7 +66,18 @@ export default function Sidebar() {
           })}
         </ul>
       </nav>
-    </>
+
+      <div className="p-4 border-t border-blue-200">
+        <Button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 bg-red-50 text-red-700 hover:bg-red-100 border border-red-200"
+          variant="outline"
+        >
+          <LogOut className="h-5 w-5" />
+          <span className="font-medium">Logout</span>
+        </Button>
+      </div>
+    </div>
   )
 
   return (
@@ -65,7 +88,6 @@ export default function Sidebar() {
           variant="outline"
           size="icon"
           onClick={toggleMobileMenu}
-          // className="bg-white border-blue-200 hover:bg-blue-50"
           className={
             isMobileMenuOpen ? "bg-white border-blue-200 hover:bg-blue-50 hidden" :"bg-white border-blue-200 hover:bg-blue-50"
           }
