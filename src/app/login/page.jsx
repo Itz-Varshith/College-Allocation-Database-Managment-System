@@ -21,21 +21,7 @@ export default function HomePage() {
         </div>
       </main>
 
-      <footer className="w-full py-6 px-4 border-t border-border">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 text-sm text-muted-foreground">
-            <a href="#" className="hover:text-foreground transition-colors">
-              Privacy Policy
-            </a>
-            <span className="hidden sm:inline">•</span>
-            <a href="#" className="hover:text-foreground transition-colors">
-              Terms of Service
-            </a>
-            <span className="hidden sm:inline">•</span>
-            <span>© 2024 College Allocation System</span>
-          </div>
-        </div>
-      </footer>
+      
     </div>
   )
 }

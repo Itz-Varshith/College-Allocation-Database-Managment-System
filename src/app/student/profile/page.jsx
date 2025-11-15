@@ -149,7 +149,7 @@ export default function ProfilePage() {
         </CardHeader>
         <CardContent className="p-6">
           <div className="max-w-md space-y-4">
-            {message && <p className="text-red-600">{message}</p>}
+            {message && <p className="text-black">{message}</p>}
             <div className="space-y-2">
               <Label htmlFor="current-password" className="text-blue-700 font-medium">Current Password</Label>
               <Input

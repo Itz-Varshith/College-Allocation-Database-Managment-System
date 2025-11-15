@@ -3,7 +3,7 @@ import {getAllCollegeInfo, editCollegeInfo, addCollegeController} from "../contr
 
 const collegeRouter=new Router();
 
-collegeRouter.post('/add',addCollegeController)
+collegeRouter.get('/add',addCollegeController)
 collegeRouter.get('/all', getAllCollegeInfo);
 collegeRouter.post('/edit',editCollegeInfo);
 

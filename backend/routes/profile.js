@@ -65,7 +65,7 @@ router.get("/", async (req, res) => {
         isRegistered: true,
         general_rank: true,
         category_rank: true,
-        category_id: true,
+        category_id: true,  
       },
     });
 
@@ -79,7 +79,7 @@ router.get("/", async (req, res) => {
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error" }); 
+    res.status(500).json({ message: "Server error" });
   }
 });
 
