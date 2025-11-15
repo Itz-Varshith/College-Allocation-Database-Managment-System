@@ -45,6 +45,20 @@ const getPreferences = async (req, res) => {
 
 const addPreferences = async (req, res) => {
   try {
+    const currentYear=new Date().getFullYear();
+    const currentRound=await prisma.round.findFirst({
+      where:{
+        start_time:{
+          gte:new Date(currentYear,0,1)
+        }
+      }
+    })
+    if(currentRound){
+      return res.status(400).json({
+        success: false,
+        message: "You cannot change preferences after the allocation process has started",
+      });
+    }
     const data = req.body;
     data.studentId=req.session.studentId;
     if (
