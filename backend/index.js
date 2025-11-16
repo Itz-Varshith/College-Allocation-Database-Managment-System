@@ -55,7 +55,8 @@ app.use("/api", authRoutes);
 app.use("/api/profile", profileRouter);
 app.use("/api/change-password", changePasswordRouter);
 app.use('/allocation',allocationRouter)
+
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}`); 
 });
 
