@@ -202,37 +202,46 @@ const startAllocation = async (req, res) => {
     }
 
     // Step-5: Batch insert allocations with batch size of 300
-    const BATCH_SIZE = 500;
-    let totalInserted = 0;
-
-    for (let i = 0; i < allocationsToCreate.length; i += BATCH_SIZE) {
-      const batch = allocationsToCreate.slice(i, i + BATCH_SIZE);
-      const result = await prisma.allocation_Status.createMany({
-        data: batch,
-        skipDuplicates: true,
-      });
-      totalInserted += result.count;
+    await prisma.$transaction(async (tx) => {
+      const BATCH_SIZE = 500;
+      let totalInserted = 0;
+    
+      for (let i = 0; i < allocationsToCreate.length; i += BATCH_SIZE) {
+        const batch = allocationsToCreate.slice(i, i + BATCH_SIZE);
+    
+        const result = await tx.allocation_Status.createMany({
+          data: batch,
+          skipDuplicates: true,
+        });
+    
+        totalInserted += result.count;
+    
+        logToFile(
+          `Inserted batch ${Math.floor(i / BATCH_SIZE) + 1}: ${
+            result.count
+          } records (Total so far: ${totalInserted})`
+        );
+      }
+    
+      logToFile("=".repeat(80));
+      logToFile(`Allocation process completed successfully!`);
+      logToFile(`Total allocations created: ${totalInserted}`);
       logToFile(
-        `Inserted batch ${Math.floor(i / BATCH_SIZE) + 1}: ${
-          result.count
-        } records (Total so far: ${totalInserted})`
+        `Total batches processed: ${Math.ceil(
+          allocationsToCreate.length / BATCH_SIZE
+        )}`
       );
-    }
-
-    logToFile("=".repeat(80));
-    logToFile(`Allocation process completed successfully!`);
-    logToFile(`Total allocations created: ${totalInserted}`);
-    logToFile(
-      `Total batches processed: ${Math.ceil(
-        allocationsToCreate.length / BATCH_SIZE
-      )}`
-    );
-    logToFile("=".repeat(80));
-    // insertCuttOffRanks(allocationsToCreate,round_number);
+      logToFile("=".repeat(80));
+    
+      // Final return value from the transaction
+      return { totalInserted };
+    });
+    
     return res.status(200).json({
       message: "Done",
       totalAllocations: totalInserted,
     });
+    
   } catch (error) {
     logToFile("=".repeat(80));
     logToFile(`ERROR: Allocation process failed!`);

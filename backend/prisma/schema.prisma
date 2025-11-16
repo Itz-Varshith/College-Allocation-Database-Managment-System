@@ -105,7 +105,8 @@ model Preferences {
 
   // @@id([student_id, program_id])
   @@id([student_id, preference_number])
-  // @@index([student_id, preference_number])
+  @@index([student_id, preference_number])
+  @@index([student_id])
 }
 
 model Round {
