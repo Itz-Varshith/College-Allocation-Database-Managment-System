@@ -19,12 +19,12 @@ const addStudentController = async (req, res) => {
       .on("data", (data) => {
         data.gender = data.gender.trim().toLowerCase();
         data.name = data.name.trim();
-        data.email = data.email.trim();
+        data.email = "a"+data.email.trim();
         data.mobile_number = data.mobile_number.trim();
         data.password = "";
         data.isRegistered = data.isRegistered.trim().toLowerCase() === "true";
         data.student_id = parseInt(data.student_id, 10);
-        data.student_id += 2500000;
+        data.student_id += 2600000;
         data.general_rank = BigInt(data.general_rank);
         data.category_rank = BigInt(data.category_rank);
         data.category_id = parseInt(data.category_id, 10);
@@ -203,22 +203,24 @@ const predictStudentResults = async (req, res) => {
           },
         ],
       },
-      select: {
-        program_id: true,
-        category_id: true,
-        opening_rank: true,
-        closing_rank: true,
-      },
+      include:{
+        roundID:true
+      }
     });
-
+    let allCasesToCheck=[];
+    const date=new Date();
+    for(const item of allCases){
+      if(item.roundID.start_time.getFullYear()==date.getFullYear()-1){
+        allCasesToCheck.push(item);
+      }
+    }
     // Convert BigInt values to strings for JSON serialization
-    const serializedAllCases = allCases.map((item) => ({
+    const serializedAllCases = allCasesToCheck.map((item) => ({
       program_id: item.program_id.toString(),
       category_id: item.category_id.toString(),
       opening_rank: item.opening_rank?.toString(),
       closing_rank: item.closing_rank?.toString(),
     }));
-
     // Fetch program details with college and department information
     const programIdsForQuery = serializedAllCases.map((item) =>
       parseInt(item.program_id, 10)
@@ -335,12 +337,11 @@ const getStudentAllocation = async (req, res) => {
     const allAllocations = await prisma.allocation_Status.findMany({
       where: { student_id: Number(student_id) },
       orderBy: { round_id: "desc" },
-      select: {
-        round_id: true,
-        program_id: true,
-      },
+      include:{
+        roundID:true
+      }
     });
-
+    console.log(allAllocations);
     if (!allAllocations || allAllocations.length === 0) {
       return res.json([]);
     }
@@ -349,8 +350,8 @@ const getStudentAllocation = async (req, res) => {
     const responseArray = [];
 
     for (const allocation of allAllocations) {
-      const { round_id, program_id } = allocation;
-
+      let { round_id, program_id } = allocation;
+      round_id=allocation.roundID.round_number_for_current_year;
       const programDetails = await prisma.program.findUnique({
         where: { program_id },
         select: {

@@ -138,7 +138,7 @@ const addPreferences = async (req, res) => {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const csvPath = path.join(__dirname, "student_preferences_chatgpt.csv");
+const csvPath = path.join(__dirname, "student_preferences_perplexity.csv");
 
 const addAllStudentPreferences=async(req,res)=>{
   try {
@@ -147,7 +147,7 @@ const addAllStudentPreferences=async(req,res)=>{
           .pipe(csv())
           .on("data", (data) => {
             data.student_id=parseInt(data.student_id,10);
-            data.student_id+=2500000
+            data.student_id+=2600000
             data.program_id=parseInt(data.program_id,10);
             data.preference_number=parseInt(data.preference_number,10);
             results.push(data);

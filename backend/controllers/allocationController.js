@@ -20,24 +20,29 @@ const logToFile = (message) => {
   console.log(message); // Also log to console for immediate feedback
 };
 
-const insertCuttOffRanks = async (req, res) => {
+const insertCuttOffRanks = async (roundData) => {
   try {
     // select min(rank_value_used) as opening_rank,max(rank_value_used) as closing_rank from allocation_status group by program_id,category_id,round_id where round_id=round_number
-    const cuttOffRanks = await prisma.allocation_Status.groupBy({
-      by: ["program_id", "category_id", "round_id"],
-      _min: {
-        rank_value_used: true,
-      },
-      _max: {
-        rank_value_used: true,
-      },
-    });
+    console.log(roundData);
+   const cuttOffRanks = await prisma.allocation_Status.groupBy({
+  by: ["program_id", "category_id"],
+  where: {
+    round_id: roundData.round_number,   
+  },
+  _min: {
+    rank_value_used: true,
+  },
+  _max: {
+    rank_value_used: true,
+  },
+});
+  console.log(cuttOffRanks);
 
     // Convert BigInt values to strings for JSON serialization
     const serializedCuttOffRanks = cuttOffRanks.map((item) => ({
       program_id: item.program_id,
       category_id: item.category_id,
-      round_id: item.round_id,
+      round_id: roundData.round_number,
       opening_rank: item._min.rank_value_used?.toString(),
       closing_rank: item._max.rank_value_used?.toString(),
     }));
@@ -49,11 +54,7 @@ const insertCuttOffRanks = async (req, res) => {
     logToFile(
       `Fetched cutoff ranks for ${serializedCuttOffRanks.length} program-category combinations`
     );
-    return res.status(200).json({
-      success: true,
-      message: "Cutt off ranks fetched successfully",
-      data: serializedCuttOffRanks,
-    });
+    return result;
   } catch (error) {
     logToFile("=".repeat(80));
     logToFile(`ERROR: Inserting cutt off ranks failed!`);
@@ -61,17 +62,15 @@ const insertCuttOffRanks = async (req, res) => {
     logToFile(`Stack trace: ${error.stack}`);
     logToFile("=".repeat(80));
     console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "Server error while inserting cutt off ranks",
-    });
+    throw new Error("Insertion into database failed (Cutoff ranks)")
+    
   }
 };
 
 const startAllocation = async (req, res) => {
   try {
     // Getting details of the round number here
-    const round_number = 1;
+    const round_number = parseInt(req.query.roundNumber,10);
     logToFile("=".repeat(80));
     logToFile(`Starting allocation process for Round ${round_number}`);
     logToFile("=".repeat(80));
@@ -79,7 +78,14 @@ const startAllocation = async (req, res) => {
     // Step 2 Fetch all students with data id, general rank, category rank and category id
     // Step 3 Go Through all the student (i.e allocation status table) and decrease the seat count(for those programs who have freezed their seats) in the seat matrix map declared above
     // Step 4 Iterate over students and fetch their preferences and iterate over preferences and check if preference is available and allot insert data into allocation status table and update seat matrix map
-
+    const date=new Date(new Date().getFullYear(),0,1);
+    const roundData=await prisma.round.findFirst({
+      where:{
+        round_number_for_current_year:round_number,
+        start_time:{gte:date}
+      }
+    }) 
+    console.log(roundData);
     // Step-1
     let availableSeatMatrix = new Map();
     const seat_matrix_data = await prisma.seat_Matrix.findMany();
@@ -95,6 +101,7 @@ const startAllocation = async (req, res) => {
       where: {
         current_status: "float",
         isRegistered: true,
+        student_id:{gte:2600000}
       },
       select: {
         student_id: true,
@@ -102,7 +109,7 @@ const startAllocation = async (req, res) => {
         category_rank: true,
         category_id: true,
       },
-      //   take: 1000,
+        // take: 100,
     });
 
     // Step-3
@@ -162,7 +169,7 @@ const startAllocation = async (req, res) => {
             student_id: student.student_id,
             program_id: preference.program_id,
             category_id: 1,
-            round_id: round_number,
+            round_id: roundData.round_number,
             rank_value_used: student.general_rank,
             rank_type_used: "general",
             year: 2025,
@@ -187,7 +194,7 @@ const startAllocation = async (req, res) => {
             student_id: student.student_id,
             program_id: preference.program_id,
             category_id: student.category_id,
-            round_id: round_number,
+            round_id: roundData.round_number,
             rank_value_used: student.category_rank,
             rank_type_used: "category",
             year: 2025,
@@ -236,7 +243,7 @@ const startAllocation = async (req, res) => {
       // Final return value from the transaction
       return { totalInserted };
     });
-    
+    insertCuttOffRanks(roundData);
     return res.status(200).json({
       message: "Done",
       totalAllocations: totalInserted,
@@ -286,16 +293,21 @@ const getOpeningAndClosingRanks = async (req, res) => {
         program_id: true,
       },
     });
-    const roundDetails = await prisma.round.findUnique({
+    const date1=new Date(new Date().getFullYear()-1,0,1);
+    const date2=new Date(new Date().getFullYear(),0,1);
+    const roundDetails = await prisma.round.findFirst({
       where: {
-        round_number: data.round_number,
+        round_number_for_current_year: data.round_number,
+        start_time:{gte:date1},
+        start_time:{lte:date2}
       },
     });
+    const roundDataToQuery=[];roundDataToQuery.push(roundDetails.round_number);
     const totalData = await prisma.cutOff_ranks.findMany({
       where: {
         program_id: { in: allProgramsids.map((item) => item.program_id) },
         category_id: { in: data.category_id },
-        round_id: { in: roundDetails.round_id },
+        round_id: { in: roundDataToQuery},
       },
       include: {
         programID: {
@@ -347,12 +359,12 @@ const FetchRoundNumber = async (req,res) => {
         start_time: "desc",  // closest to now
       },
       select: {
-        round_number: true,
+        round_number_for_current_year: true,
       },
     });
-
+    console.log(round);
     // return round_number or null
-    let round_no=round ? round.round_number : null
+    let round_no=round ? round.round_number_for_current_year : null
     return res.status(200).json({
       success: true,
       message: "Round number returned successfully",
@@ -361,9 +373,86 @@ const FetchRoundNumber = async (req,res) => {
 
   } catch (error) {
     console.error("Error getting latest round number:", error);
-    return null;
+    return res.json({
+      success:false,
+      message:"Server error while fetching round number",
+      error:error
+    });
   }
 };
 
-export { startAllocation, insertCuttOffRanks,getOpeningAndClosingRanks,FetchRoundNumber };
+
+
+function getRandomElements(arr, count) {
+  let result = [];
+  let used = new Set();
+  if (count <= 0) return result;
+
+  while (result.length < count && used.size < arr.length) {
+    let idx = Math.floor(Math.random() * arr.length);
+    if (!used.has(idx)) {
+      used.add(idx);
+      result.push(arr[idx]);
+    }
+  }
+  return result;
+}
+
+const updateFloatStatus = async (req, res) => {
+  try {
+    let floatStudents = await prisma.student.findMany({
+      where: { current_status: "float" },
+      select: { student_id: true },
+    });
+
+    let totalFloat = floatStudents.length;
+
+    let withdrawCount = Math.floor(totalFloat / 50);
+    let freezeCount = Math.floor(totalFloat / 10);
+
+    let withdrawn = getRandomElements(floatStudents, withdrawCount);
+    let withdrawnIds = withdrawn.map(s => s.student_id);
+
+    let remaining = floatStudents.filter(
+      (s) => !withdrawnIds.includes(s.student_id)
+    );
+
+    let frozen = getRandomElements(remaining, freezeCount);
+    let frozenIds = frozen.map(s => s.student_id);
+
+    let txOps = [];
+
+    if (withdrawnIds.length > 0) {
+      txOps.push(
+        prisma.student.updateMany({
+          where: { student_id: { in: withdrawnIds } },
+          data: { current_status: "withdrawn" },
+        })
+      );
+    }
+
+    if (frozenIds.length > 0) {
+      txOps.push(
+        prisma.student.updateMany({
+          where: { student_id: { in: frozenIds } },
+          data: { current_status: "freeze" },
+        })
+      );
+    }
+
+    await prisma.$transaction(txOps);
+
+    res.json({
+      message: "Status update completed.",
+      withdrawn: withdrawnIds,
+      frozen: frozenIds,
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export { startAllocation, insertCuttOffRanks,getOpeningAndClosingRanks,FetchRoundNumber,updateFloatStatus };
 

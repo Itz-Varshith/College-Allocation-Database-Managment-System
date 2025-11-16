@@ -114,6 +114,7 @@ model Round {
   start_time        DateTime            @default(now())
   end_time          DateTime
   duration          Int
+  round_number_for_current_year Int @default(1)
   Allocation_Status Allocation_Status[]
   CutOff_ranks      CutOff_ranks[]
 }
