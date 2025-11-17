@@ -1296,7 +1296,7 @@ export default function HomePage() {
       <div className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
         <p className="text-sm text-gray-700 mb-2">Need help understanding the allocation process?</p>
         <a
-          href="/docs/allocation-key-terms.pdf"
+          href="/Feature_List_Document_Final.pdf"
           target="_blank"
           rel="noopener noreferrer"
           className="text-blue-600 hover:text-blue-800 font-medium underline"
