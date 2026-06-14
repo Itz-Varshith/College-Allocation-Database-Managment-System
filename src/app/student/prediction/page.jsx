@@ -11,8 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { TrendingUp, Loader2 } from "lucide-react";
-
-const API_BASE_URL = "http://localhost:9000";
+import { API_BASE_URL } from "@/lib/api";
 
 export default function PredictionPage() {
   const [selectedCollege, setSelectedCollege] = useState("");
@@ -22,25 +21,21 @@ export default function PredictionPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Data for dropdowns
   const [colleges, setColleges] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [loadingData, setLoadingData] = useState(true);
 
-  // Fetch initial data
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
         setLoadingData(true);
 
-        // Fetch colleges
         const collegesResponse = await fetch(`${API_BASE_URL}/college/all`);
         const collegesData = await collegesResponse.json();
         if (collegesData.success) {
           setColleges(collegesData.namesList);
         }
 
-        // Fetch departments
         const departmentsResponse = await fetch(
           `${API_BASE_URL}/department/all`
         );
@@ -81,7 +76,7 @@ export default function PredictionPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include", // Important for session cookies
+        credentials: "include",
         body: JSON.stringify(requestData),
       });
 

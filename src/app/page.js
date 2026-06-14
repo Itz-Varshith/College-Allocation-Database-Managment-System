@@ -40,7 +40,7 @@ const features = [
 export default function LandingPage() {
   return (
     <div className="min-h-dvh bg-background text-foreground">
-      {/* Top Navigation */}
+
       <header className="border-b border-border">
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <Link href="/" className="font-semibold tracking-tight">
@@ -52,7 +52,6 @@ export default function LandingPage() {
         </nav>
       </header>
 
-      {/* Hero Section */}
       <main>
         <section className="mx-auto max-w-6xl px-4 py-10 md:py-10">
           <div className="mx-auto max-w-3xl text-center">
@@ -73,7 +72,6 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Features Grid */}
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
               <div key={f.title}>

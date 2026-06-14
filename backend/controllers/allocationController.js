@@ -209,7 +209,7 @@ const startAllocation = async (req, res) => {
     }
 
     // Step-5: Batch insert allocations with batch size of 300
-    await prisma.$transaction(async (tx) => {
+    const data=await prisma.$transaction(async (tx) => {
       const BATCH_SIZE = 500;
       let totalInserted = 0;
     
@@ -246,7 +246,7 @@ const startAllocation = async (req, res) => {
     insertCuttOffRanks(roundData);
     return res.status(200).json({
       message: "Done",
-      totalAllocations: totalInserted,
+      totalAllocations: data,
     });
     
   } catch (error) {
