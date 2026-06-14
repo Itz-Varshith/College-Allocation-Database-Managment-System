@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState } from "react"
@@ -8,9 +7,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Eye, EyeOff } from "lucide-react"
+import { API_BASE_URL } from "@/lib/api"
 
 export function LoginForm() {
-  const router = useRouter() 
+  const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -23,7 +23,7 @@ export function LoginForm() {
     setMessage("")
 
     try {
-      const response = await fetch("http://localhost:9000/api/login", {
+      const response = await fetch(`${API_BASE_URL}/api/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

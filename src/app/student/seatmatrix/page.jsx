@@ -1,10 +1,10 @@
-
 "use client"
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Grid3X3 } from "lucide-react"
+import { API_BASE_URL } from "@/lib/api"
 
 export default function SeatMatrixPage() {
   const [selectedInstitute, setSelectedInstitute] = useState("")
@@ -14,16 +14,14 @@ export default function SeatMatrixPage() {
   const [showResults, setShowResults] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  // NEW: State for fetched lists
   const [institutes, setInstitutes] = useState([])
   const [departments, setDepartments] = useState([])
   const [categories, setCategories] = useState([])
 
-  // Fetch dropdown data from backend
   useEffect(() => {
     const fetchInstitutes = async () => {
       try {
-        const res = await fetch("http://localhost:9000/college/all")
+        const res = await fetch(`${API_BASE_URL}/college/all`)
         const data = await res.json()
         if (data.success && data.namesList) {
           setInstitutes(data.namesList)
@@ -35,7 +33,7 @@ export default function SeatMatrixPage() {
 
     const fetchDepartments = async () => {
       try {
-        const res = await fetch("http://localhost:9000/department/all")
+        const res = await fetch(`${API_BASE_URL}/department/all`)
         const data = await res.json()
         if (data.success && data.namesList) {
           setDepartments(data.namesList)
@@ -47,7 +45,7 @@ export default function SeatMatrixPage() {
 
     const fetchCategories = async () => {
       try {
-        const res = await fetch("http://localhost:9000/category/all")
+        const res = await fetch(`${API_BASE_URL}/category/all`)
         const data = await res.json()
         if (data.success && data.namesList) {
           setCategories(data.namesList)
@@ -87,7 +85,7 @@ export default function SeatMatrixPage() {
         } else {
           categoryArray = [Number.parseInt(selectedCategory, 10)]
         }
-        const res = await fetch("http://localhost:9000/seatMatrix/data", {
+        const res = await fetch(`${API_BASE_URL}/seatMatrix/data`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -142,7 +140,7 @@ export default function SeatMatrixPage() {
         <CardContent className="p-6">
           <div className="space-y-6">
             <div className="space-y-4">
-              {/* Institute Dropdown */}
+
               <div className="grid grid-cols-4">
                 <label className="text-sm font-medium text-gray-700 col-span-1 my-auto">Select Institute</label>
                 <Select value={selectedInstitute} onValueChange={setSelectedInstitute}>
@@ -160,7 +158,6 @@ export default function SeatMatrixPage() {
                 </Select>
               </div>
 
-              {/* Department Dropdown */}
               <div className="grid grid-cols-4">
                 <label className="text-sm font-medium text-gray-700 col-span-1 my-auto">Select Department</label>
                 <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
@@ -178,7 +175,6 @@ export default function SeatMatrixPage() {
                 </Select>
               </div>
 
-              {/* Category Dropdown */}
               <div className="grid grid-cols-4">
                 <label className="text-sm font-medium text-gray-700 col-span-1 my-auto">Select Category</label>
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>

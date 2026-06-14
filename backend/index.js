@@ -19,6 +19,7 @@ import changePasswordRouter from "./routes/changePassword.js";
 
 dotenv.config();
 
+
 const PORT = process.env.PORT || 9000;
 
 const prisma = new PrismaClient();
